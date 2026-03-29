@@ -1,5 +1,5 @@
 ---
-Date: 2026-03-29
+Date: 2026-02-03
 Title: Configuring Plex for access through Tailscale
 Description: Getting Plex and Tailscale working together isn't obvious -- here are the two config changes that actually fix it.
 ---
