@@ -249,7 +249,7 @@ th {
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .bio h1 {
