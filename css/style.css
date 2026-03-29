@@ -264,14 +264,19 @@ th {
 
 .bio-links {
   margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
 }
 
 .bio-links a {
-  color: var(--color-muted);
+  color: #0a66c2;
+  display: inline-block;
+  transition: transform 0.15s ease;
 }
 
 .bio-links a:hover {
-  color: var(--color-accent);
+  color: #0a66c2;
+  transform: scale(1.2);
+  text-decoration: none;
 }
 
 .icon {
