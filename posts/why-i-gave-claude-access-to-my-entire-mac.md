@@ -1,9 +1,13 @@
 ---
-title: How I gave Claude access to my entire Mac
-date: 2026-03-24
-tags: [mcp, macos, claude, ai]
-description: Building a suite of MCP servers and a macOS service manager to give Claude secure access to email, calendar, reminders, and notes.
 Medium URL: https://medium.com/@farmerajf/i-built-a-macos-app-to-manage-my-mcp-servers-e3cb0e8fa6df
+Title: Why I gave Claude access to my entire Mac
+Date: 2026-03-24
+Tags:
+  - mcp
+  - macos
+  - claude
+  - ai
+Description: Building a suite of MCP servers and a macOS service manager to give Claude secure access to email, calendar, reminders, and notes.
 ---
 If you've seen [OpenClaw](https://github.com/steipete/openclaw) (formerly Moltbot/Clawdbot) blow up recently, the idea will be familiar: a personal AI assistant running on a Mac mini with access to your entire digital life. I built essentially the same thing independently, but with a different philosophy. If I'm giving an AI access to my email, calendar, reminders, and notes, I need to fully trust every piece of software in the chain. I didn't trust a third-party framework with that, so I built each piece myself using [MCP](https://modelcontextprotocol.io/) servers that I own and control.
 
@@ -20,11 +24,11 @@ So I built a macOS menu bar app called Service Manager. It does two things:
 
 Both in one window, because for my use case they're tightly coupled. Every MCP server I run locally also has a corresponding funnel mapping to expose it.
 
-![[9ad322ea-02ba-4b1a-a9f1-1cf529f8fc4a.png]]
+![[f0e8714c-2a34-484a-b999-e5528b53cb0e.png]]
 
 The Funnels tab syncs automatically with your existing Tailscale configuration by parsing `tailscale funnel status --json` on launch. You can add, edit, and remove funnel mappings directly from the app, so you can see at a glance what's running and how it's exposed.
 
-![[be1fbca1-f54b-4b4a-8c16-1404e7668bf4.png]]
+![[cdb94ceb-23c5-479c-b891-8f4f107e0c33.png]]
 
 ## The macOS permissions problem
 
@@ -40,7 +44,7 @@ Exposing MCP servers to the internet through Tailscale Funnel creates an authent
 
 I built an OAuth 2.1 gateway that sits in front of all my MCP servers. When Claude.ai connects to a server for the first time, it goes through a standard OAuth Authorization Code flow with PKCE. Instead of a web-based login page, the gateway triggers a native macOS dialog showing which client wants to connect to which server. I click Approve, the flow completes, and Claude gets a bearer token.
 
-![[589c8ab0-b543-4c0b-8178-3775b21e79d0.png]]
+![[e3431c67-cfd0-4711-b5d2-6e0aba8040f0.png]]
 
 The tokens use an HMAC-SHA256 time-bucket scheme. Each MCP server shares a secret with the gateway, so servers can validate tokens independently without needing to call back to the gateway.
 

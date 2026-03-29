@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync, existsSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, cpSync, rmSync, readdirSync, existsSync } from "fs";
 import { join, basename } from "path";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
@@ -128,6 +128,8 @@ function formatDate(dateStr) {
 
 // --- Build ---
 async function build() {
+  rmSync(BUILD_DIR, { recursive: true, force: true });
+
   const postTemplate = loadTemplate("post.html");
   const blogIndexTemplate = loadTemplate("blog-index.html");
 
@@ -143,10 +145,10 @@ async function build() {
 
     posts.push({
       slug,
-      title: frontmatter.title || slug,
-      date: frontmatter.date || "1970-01-01",
-      tags: frontmatter.tags || [],
-      description: frontmatter.description || "",
+      title: frontmatter.Title || slug,
+      date: frontmatter.Date || "1970-01-01",
+      tags: frontmatter.Tags || [],
+      description: frontmatter.Description || "",
       html,
     });
   }
