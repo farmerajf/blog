@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, cpSync, readdirSync, existsSync } from "fs";
 import { join, basename } from "path";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
@@ -13,8 +13,8 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const POSTS_DIR = join(ROOT, "posts");
 const BUILD_DIR = join(ROOT, "build");
 const TEMPLATES_DIR = join(ROOT, "src", "templates");
-const PAGES_DIR = join(ROOT, "pages");
 const CSS_DIR = join(ROOT, "css");
+const IMAGES_DIR = join(ROOT, "images");
 
 // --- Obsidian callout plugin ---
 // Transforms blockquotes starting with [!type] into callout divs
@@ -75,12 +75,35 @@ function visit(tree, type, fn) {
   }
 }
 
+// --- Obsidian embed plugin ---
+// Converts ![[filename.png]] to standard image nodes
+function remarkObsidianEmbeds() {
+  return (tree) => {
+    visit(tree, "paragraph", (node, index, parent) => {
+      if (!parent || node.children.length !== 1) return;
+      const child = node.children[0];
+      if (child.type !== "text") return;
+
+      const match = child.value.match(/^!\[\[(.+?\.(png|jpg|jpeg|gif|webp|svg))\]\]$/i);
+      if (!match) return;
+
+      const filename = match[1];
+      parent.children[index] = {
+        type: "image",
+        url: `/images/${encodeURIComponent(filename)}`,
+        alt: filename,
+      };
+    });
+  };
+}
+
 // --- Markdown processor ---
 const processor = unified()
   .use(remarkParse)
   .use(remarkFrontmatter, ["yaml"])
   .use(remarkGfm)
   .use(remarkCallouts)
+  .use(remarkObsidianEmbeds)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeHighlight, { detect: true })
   .use(rehypeStringify, { allowDangerousHtml: true });
@@ -133,7 +156,7 @@ async function build() {
 
   // Write individual post pages
   for (const post of posts) {
-    const outDir = join(BUILD_DIR, "blog", post.slug);
+    const outDir = join(BUILD_DIR, post.slug);
     mkdirSync(outDir, { recursive: true });
 
     const tags = post.tags.map((t) => `<span class="tag">${t}</span>`).join(" ");
@@ -151,7 +174,7 @@ async function build() {
     .map(
       (p) =>
         `<article class="post-preview">
-  <a href="/blog/${p.slug}/">
+  <a href="/${p.slug}/">
     <h2>${p.title}</h2>
   </a>
   <time datetime="${p.date}">${formatDate(p.date)}</time>
@@ -160,15 +183,16 @@ async function build() {
     )
     .join("\n");
 
-  mkdirSync(join(BUILD_DIR, "blog"), { recursive: true });
+  mkdirSync(BUILD_DIR, { recursive: true });
   writeFileSync(
-    join(BUILD_DIR, "blog", "index.html"),
+    join(BUILD_DIR, "index.html"),
     render(blogIndexTemplate, { posts: postListHtml })
   );
 
-  // Copy static pages
-  if (readdirSync(PAGES_DIR).length) {
-    cpSync(PAGES_DIR, BUILD_DIR, { recursive: true });
+  // Copy images
+  if (existsSync(IMAGES_DIR)) {
+    mkdirSync(join(BUILD_DIR, "images"), { recursive: true });
+    cpSync(IMAGES_DIR, join(BUILD_DIR, "images"), { recursive: true });
   }
 
   // Copy CSS
