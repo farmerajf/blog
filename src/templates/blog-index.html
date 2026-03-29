@@ -7,15 +7,47 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <nav class="site-nav">
-    <a href="/">Blog</a>
-  </nav>
+  <main class="home">
+    <section class="home-blog">
+      <h1>Blog</h1>
+      <div class="post-list">
+        {{posts}}
+      </div>
+    </section>
 
-  <main>
-    <h1>Blog</h1>
-    <div class="post-list">
-      {{posts}}
-    </div>
+    <aside class="home-projects">
+      <h1>Projects</h1>
+      <ul class="project-list">
+        <li>
+          <a href="https://github.com/farmerajf/service-manager">Service Manager</a>
+          <p>macOS menu bar app for managing local services and Tailscale Funnel mappings.</p>
+        </li>
+        <li>
+          <a href="https://github.com/farmerajf/obsidian-mcp-server">Obsidian MCP Server</a>
+          <p>Full read/write access to Obsidian vaults with wikilink-aware operations.</p>
+        </li>
+        <li>
+          <a href="https://github.com/farmerajf/apple-events-mcp">Apple Events MCP</a>
+          <p>Apple Reminders and Calendar access via EventKit.</p>
+        </li>
+        <li>
+          <a href="https://github.com/farmerajf/apple-mail-mcp">Apple Mail MCP</a>
+          <p>Read, search, and compose emails through Apple Mail.</p>
+        </li>
+        <li>
+          <a href="https://github.com/farmerajf/apple-notes-mcp">Apple Notes MCP</a>
+          <p>Search and read access to Apple Notes.</p>
+        </li>
+        <li>
+          <a href="https://github.com/farmerajf/scheduler-mcp">Scheduler MCP</a>
+          <p>Schedule recurring Claude Code tasks with cron expressions.</p>
+        </li>
+        <li>
+          <a href="https://github.com/farmerajf/mcp-auth-gateway">MCP Auth Gateway</a>
+          <p>OAuth 2.1 gateway for authenticating MCP server connections.</p>
+        </li>
+      </ul>
+    </aside>
   </main>
 
   <footer class="site-footer">
